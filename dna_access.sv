@@ -16,6 +16,9 @@ module dna_reader (
 
 );
 
+   logic start_d;
+   logic start_pulse;
+
 
    // ----------------------------------------------------------------
    // DNA_PORT signals
@@ -90,7 +93,7 @@ module dna_reader (
 
 
            IDLE: begin
-               if (start)
+               if (start_pulse)
                    next_state = READ_PULSE;
            end
 
@@ -109,6 +112,8 @@ module dna_reader (
            DONE_ST: begin
                next_state = IDLE;
            end
+
+           
 
 
        endcase
@@ -152,6 +157,7 @@ module dna_reader (
                busy = 1'b0;
            end
 
+           
 
        endcase
    end
@@ -189,5 +195,17 @@ module dna_reader (
        end
    end
 
+   always_ff @(posedge CLK or negedge RST_n) begin  
+        if (!RST_n) begin
+        start_d <= 1'b0;
+        end else begin 
+        start_d <= start;
+        end
+
+   end
+
+assign start_pulse = start & ~start_d;
 
 endmodule
+
+
